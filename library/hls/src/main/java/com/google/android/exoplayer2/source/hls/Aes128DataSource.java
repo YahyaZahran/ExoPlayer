@@ -50,6 +50,8 @@ import javax.crypto.spec.SecretKeySpec;
   private final DataSource upstream;
   private final byte[] encryptionKey;
   private final byte[] encryptionIv;
+  
+  String[] hash= new String[]{"5F", "A2", "18", "C3", "6A", "FF", "33", "B6"};
 
   @Nullable private CipherInputStream cipherInputStream;
 
@@ -59,8 +61,36 @@ import javax.crypto.spec.SecretKeySpec;
    * @param encryptionIv The encryption initialization vector.
    */
   public Aes128DataSource(DataSource upstream, byte[] encryptionKey, byte[] encryptionIv) {
+    
+     byte[] decodedKey = Base64.decode(new String(encryptionKey), 0);
+     byte[] newKey = new byte[decodedKey.length];
+    
+    try {
+            char[] charArray = new String(decodedKey).toCharArray();
+            int k = 0;
+            for (int i = 0; i < decodedKey.length; i++) 
+            {
+                if (i < decodedKey.length / 2) 
+                {
+                    int doubleIdx = i * 2;
+                    int parseInt = Integer.parseInt(charArray[doubleIdx] + "" + charArray[doubleIdx+1], 16);
+                    String binaryString = Integer.toBinaryString(parseInt);
+                    newKey[i] = (byte) Integer.parseInt(binaryString, 2);
+                } 
+                else 
+                {
+                    newKey[i] = (byte) Integer.parseInt(Integer.toBinaryString(Integer.parseInt(this.hash[k], 16)), 2);
+                    k++;
+                }
+             
+            }
+        } catch (Exception e) {}
+        
+    
+    
+    
     this.upstream = upstream;
-    this.encryptionKey = encryptionKey;
+    this.encryptionKey = newKey;
     this.encryptionIv = encryptionIv;
   }
 
