@@ -36,6 +36,7 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import android.util.Base64;
 
 /**
  * A {@link DataSource} that decrypts data read from an upstream source, encrypted with AES-128 with
